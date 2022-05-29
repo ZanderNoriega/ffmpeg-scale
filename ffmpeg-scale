@@ -75,9 +75,6 @@ do
   OUTPUT="$OUTPUT_DIR/$OUTPUT_FILENAME"
   ffmpeg -i $f -vf scale=$WIDTH:$HEIGHT $OUTPUT
   echo "output: [$OUTPUT]"
-
-  # take action on each file. $f store current file name
-  # cat "$f"
 done
 
 IFS=$SAVEIFS
