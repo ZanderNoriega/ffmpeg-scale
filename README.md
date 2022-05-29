@@ -8,11 +8,15 @@ It runs the `ffmpeg` command, so you need to have that installed.
 
 # Usage examples
 
-To resize all files in the current directory (option `-d` to `.`) to width 100 (option `-w` to `100`), while keeping the aspect ratio (setting height, ie. option `-h` to `-1`, as expected by `ffmpeg` for this purpose):
+To resize all images in the current directory (option `-d` to `.`) to width 100 (option `-w` to `100`), while keeping the aspect ratio (setting height, ie. option `-h` to `-1`, as expected by `ffmpeg` for this purpose):
 
 ```
 $ ffmpeg-scale -w 100 -h -1 -d .
 ```
+
+# TODO
+
+* Support more extensions. Only .png or .jpg supported at the moment.
 
 # LICENSE
 
