@@ -1,0 +1,83 @@
+#!/bin/bash
+# https://trac.ffmpeg.org/wiki/Scaling
+
+# to let user specify width, height, input and output dir
+
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -w|--width)
+      WIDTH="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -h|--height)
+      HEIGHT="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -d|--dir)
+      INPUT_DIR="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -o|--out)
+      OUTPUT_DIR="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift # past argument
+      ;;
+  esac
+done
+
+# cos width and height are needed
+if [[ -z "$WIDTH" ]]; then
+    echo "Must provide -w option" 1>&2
+    exit 1
+fi
+
+if [[ -z "$HEIGHT" ]]; then
+    echo "Must provide -h option" 1>&2
+    exit 1
+fi
+
+if [[ -z "$INPUT_DIR" ]]; then
+    echo "Must provide -d option" 1>&2
+    exit 1
+fi
+
+if [[ -z "$OUTPUT_DIR" ]]; then
+  OUTPUT_DIR="output-$(date +"%Y-%m-%d-%H%M%S")"
+fi
+
+echo "scale width to [$WIDTH]";
+echo "scale height to [$HEIGHT]";
+echo "input directory is [$INPUT_DIR]";
+
+# cos looping breaks if filenames have spaces
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+mkdir $OUTPUT_DIR
+
+FILES=`find $INPUT_DIR -type f \( -iname \*.jpg -o -iname \*.png \)`
+for f in $FILES
+do
+  echo "Processing [$f]"
+  OUTPUT_FILENAME=`echo $f | sed -E 's/^\.\///' | sed -E 's/(^.*)(\.[a-zA-Z]+)$/\1-scaled\2/'`
+  OUTPUT="$OUTPUT_DIR/$OUTPUT_FILENAME"
+  ffmpeg -i $f -vf scale=$WIDTH:$HEIGHT $OUTPUT
+  echo "output: [$OUTPUT]"
+
+  # take action on each file. $f store current file name
+  # cat "$f"
+done
+
+IFS=$SAVEIFS
